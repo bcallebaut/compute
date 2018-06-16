@@ -10,7 +10,10 @@ import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.relationships.Entity;
 import be.belgiplast.utilities.relationships.Relationship;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -21,20 +24,22 @@ public class EntitySupport implements Entity{
     private Name type;
     private String name;
     private Namespace parent;
-    private final List<Relationship<Name>> relationships;
+    private final Map<Name,List<Relationship<Name>>> relationships;
 
     public EntitySupport(Name type, String name, Namespace parent) {
         this.type = type;
         this.name = name;
         this.parent = parent;
-        relationships = new ArrayList<>();
+        relationships = new HashMap<>();
     }
     
     protected EntitySupport(Name type, String name, Namespace parent, List<Relationship<Name>> relationships) {
         this.type = type;
         this.name = name;
         this.parent = parent;
-        this.relationships = relationships;
+        this.relationships = new HashMap<>();
+        for (Relationship<Name> rel : relationships)
+            addRelationship(rel);
     }
 
     protected void setName(String name) {
@@ -48,7 +53,26 @@ public class EntitySupport implements Entity{
 
     @Override
     public List<Relationship<Name>> getRelationships(Name type) {
-        return relationships;
+        List<Relationship<Name>> result = relationships.get(type);
+        if (result == null)
+            return Collections.emptyList();
+        return result;
+    }
+    
+    public List<Relationship<Name>> getRelationships() {
+        List<Relationship<Name>> result = new ArrayList<>();
+        for (List<Relationship<Name>> l : relationships.values())
+            result.addAll(l);
+        return result;
+    }
+    
+    protected void addRelationship(Relationship rel){
+        List<Relationship<Name>> result = relationships.get(rel.getId());
+        if (result == null){
+            result = new ArrayList<Relationship<Name>>();
+            relationships.put(rel.getId(),result);
+        }
+        result.add(rel);
     }
 
     @Override

@@ -15,4 +15,5 @@ import java.util.List;
 public interface Entity<N extends Name> extends Name {
     N getEntityType();
     <T extends Name> List<Relationship<T>> getRelationships(Name type);
+    List<Relationship<Name>> getRelationships();
 }

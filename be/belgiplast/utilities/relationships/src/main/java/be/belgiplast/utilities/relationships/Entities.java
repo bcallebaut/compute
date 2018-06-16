@@ -6,6 +6,7 @@
 package be.belgiplast.utilities.relationships;
 
 import be.belgiplast.utilities.namespaces.Name;
+import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.relationships.factories.EntityFactory;
 import be.belgiplast.utilities.relationships.factories.RelationshipFactory;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import java.util.Collection;
  *
  * @author benoit
  */
-public interface Entities<N extends Name> extends Name{
+public interface Entities<N extends Name> extends Namespace{
     EntityFactory<Entity<N>> getEntityFactory();
     RelationshipFactory<Relationship<N>> getRelationshipFactory();
     Collection<Entity<N>> getEntities();
