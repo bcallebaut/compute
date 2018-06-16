@@ -5,6 +5,8 @@
  */
 package be.belgiplast.utilities.relationships.factories;
 
+import be.belgiplast.utilities.namespaces.Namespace;
+import be.belgiplast.utilities.relationships.Entities;
 import be.belgiplast.utilities.relationships.Entity;
 import java.util.HashMap;
 
@@ -15,13 +17,18 @@ import java.util.HashMap;
  */
 public abstract class EntityFactory <E extends Entity> {
     private final HashMap<String,E> entities = new HashMap<>();
+    private Namespace namespace;
+
+    public EntityFactory(Namespace namespace) {
+        this.namespace = namespace;
+    }
     
-    protected abstract E newInstance(String name);
+    protected abstract E newInstance(String name, Namespace namespace);
     
     public final E createEntity(String name){
         if (entities.containsKey(name))
             return entities.get(name);
-        E instance = newInstance(name);
+        E instance = newInstance(name, namespace);
         if (instance == null)
             return null;
         entities.put(name, instance);
