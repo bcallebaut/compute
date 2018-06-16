@@ -7,49 +7,25 @@ package be.belgiplast.utilities.relationships;
 
 import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
+import be.belgiplast.utilities.relationships.support.RelationshipSupport;
 
 /**
  *
  * @author benoit
  */
-public class DynamicRelationship implements Relationship{
+public class DynamicRelationship extends RelationshipSupport implements Relationship{
 
-    private Entity from;
-    private Entity to;
-    private Name name;
-    private Relationship inverse;
-    private Namespace namespace;
+    public DynamicRelationship(Namespace parent, String name, Name id) {
+        super(parent, name, id);
+    }
+
+    @Override
+    public Relationship createInverse() {
+        return new InverseRelationship();
+    }
     
-    @Override
-    public Name getId() {
-        return null;
-    }
-
-    @Override
-    public Entity from() {
-        return from;
-    }
-
-    @Override
-    public Entity to() {
-        return to;
-    }
-
-    @Override
-    public Relationship getInverse() {
-        if (inverse == null)
-            inverse = new InverseRelationship();
-        return inverse;
-    }
-
-    @Override
-    public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Namespace getParent() {
-        return namespace;
+    protected String getInverseName(){
+        return DynamicRelationship.this.getName()+".inverse";
     }
     
     private class InverseRelationship implements Relationship{
@@ -61,12 +37,12 @@ public class DynamicRelationship implements Relationship{
 
         @Override
         public Entity from() {
-            return to;
+            return DynamicRelationship.this.to();
         }
 
         @Override
         public Entity to() {
-            return from;
+            return DynamicRelationship.this.from();
         }
 
         @Override
@@ -76,12 +52,12 @@ public class DynamicRelationship implements Relationship{
 
         @Override
         public String getName() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return getInverseName();
         }
 
         @Override
         public Namespace getParent() {
-            return namespace;
+            return DynamicRelationship.this.getParent();
         }
     }
 }

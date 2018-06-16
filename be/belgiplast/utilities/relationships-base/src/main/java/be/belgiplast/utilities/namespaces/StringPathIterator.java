@@ -5,9 +5,6 @@
  */
 package be.belgiplast.utilities.namespaces;
 
-import be.belgiplast.utilities.namespaces.PathIterator;
-import java.net.URI;
-
 /**
  *
  * @author benoit
