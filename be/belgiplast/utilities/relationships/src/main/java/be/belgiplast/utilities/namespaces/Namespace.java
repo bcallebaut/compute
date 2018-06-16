@@ -17,4 +17,6 @@ public interface Namespace extends NamedItem{
     Collection<Name> getNames();
     
     <E extends NamedItem> E findByName(String name);
+    Name findNameByName(String name);
+    Namespace findNamespaceByName(String name);
 }

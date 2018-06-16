@@ -55,6 +55,21 @@ class DependencyNamespace implements Namespace{
     }
 
     @Override
+    public Name findNameByName(String name) {
+        for (Name n : names)
+            try{
+                if (n.getName().equals(name))
+                    return n;
+            }catch (Exception e){}
+        return null;
+    }
+
+    @Override
+    public Namespace findNamespaceByName(String name) {
+        return null;
+    }
+
+    @Override
     public String getName() {
         return "dependencies";
     }

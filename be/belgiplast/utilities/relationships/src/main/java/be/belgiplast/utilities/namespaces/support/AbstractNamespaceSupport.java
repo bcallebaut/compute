@@ -8,6 +8,8 @@ package be.belgiplast.utilities.namespaces.support;
 import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.NamedItem;
 import be.belgiplast.utilities.namespaces.Namespace;
+import be.belgiplast.utilities.util.JoinList;
+import be.belgiplast.utilities.util.JoinMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,14 +22,20 @@ import java.util.Map;
 public class AbstractNamespaceSupport implements Namespace{
     private String name;
     private Namespace parent;
-    private Map<String,NamedItem> items = new HashMap<>();
+    private JoinMap<String,NamedItem> items = new JoinMap<>();
+    private Map<String,Name> names = new HashMap<>();
+    private Map<String,Namespace> namespaces = new HashMap<>();
 
     public AbstractNamespaceSupport() {
+        items.addMap(names);
+        items.addMap(namespaces);
     }
 
     protected AbstractNamespaceSupport(String name, Namespace parent) {
         this.name = name;
         this.parent = parent;
+        items.addMap(names);
+        items.addMap(namespaces);
     }
     
     public String getName() {
@@ -39,20 +47,20 @@ public class AbstractNamespaceSupport implements Namespace{
         return parent;
     }
     
-    public void addName(Name name){
-        items.put(name.getName(), name);
+    protected void addName(Name name){
+        names.put(name.getName(), name);
     }
     
-    public void addNamespace(Namespace name){
-        items.put(name.getName(), name);
+    protected void addNamespace(Namespace name){
+        namespaces.put(name.getName(), name);
     }
     
-    public void removeName(Name name){
-        items.remove(name.getName());
+    protected void removeName(Name name){
+        names.remove(name.getName());
     }
     
-    public void removeNamespace(Namespace name){
-        items.remove(name.getName());
+    protected void removeNamespace(Namespace name){
+        names.remove(name.getName());
     }
 
     @Override
@@ -62,10 +70,7 @@ public class AbstractNamespaceSupport implements Namespace{
 
     @Override
     public Collection<Namespace> getNamespaces() {
-        ArrayList<Namespace> ns = new ArrayList<>();
-        for (NamedItem ni : items.values())
-            if (ni instanceof Namespace) ns.add((Namespace)ni);
-        return ns;
+        return namespaces.values();
     }
 
     @Override
@@ -79,5 +84,15 @@ public class AbstractNamespaceSupport implements Namespace{
     @Override
     public <E extends NamedItem> E findByName(String name) {
         return (E)items.get(name);
+    }
+    
+    @Override
+    public Name findNameByName(String name) {
+        return names.get(name);
+    }
+    
+    @Override
+    public Namespace findNamespaceByName(String name) {
+        return namespaces.get(name);
     }
 }
