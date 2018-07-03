@@ -105,8 +105,19 @@ public class NamespaceProcessor extends AbstractProcessor {
     private void generateCode(Map<String, NamespaceDef> nss) {
         for (NamespaceDef def : nss.values()){
             try {
-                JavaFileObject fo = filer.createSourceFile(createClassname(def));
+                String classname = createClassname(def);
+                JavaFileObject fo = filer.createSourceFile(classname);
                 Writer wr = fo.openWriter();
+                wr.write("package ");
+                wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                wr.write(";\n");
+                wr.write("import be.belgipast.utilities.namespace.Namespace;\n");
+                wr.write("import be.belgipast.utilities.namespace.support.AbstractNamespaceSupport;\n");
+                wr.write(String.format("public class %s extends AbstractNamespaceSupport{\n",def.getName()));
+                wr.write(String.format("    public %s (Namespace parent){\n",def.getName()));
+                wr.write(String.format("        super(\"%s\",null,parent);\n",def.getName()));
+                wr.write("    }\n");
+                wr.write("}\n");
             } catch (IOException ex) {
                 Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
