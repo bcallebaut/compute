@@ -96,32 +96,42 @@ public class NamespaceProcessor extends AbstractProcessor {
         while (current != null){
             builder = builder.insert(0, current.getName());
             current = current.getParent();
-            if (current != null)
+            if (current != null && !current.getName().trim().isEmpty())
                 builder.insert(0,"/");
         }
         return builder.toString();
     }
     
-    private void generateCode(Map<String, NamespaceDef> nss) {
-        for (NamespaceDef def : nss.values()){
+    private void generateCode(NamespaceDef def) {
+        if (def.getName().length() > 0){
             try {
                 String classname = createClassname(def);
                 JavaFileObject fo = filer.createSourceFile(classname);
                 Writer wr = fo.openWriter();
                 wr.write("package ");
-                wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                wr.write(classname);
+                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
                 wr.write(";\n");
-                wr.write("import be.belgipast.utilities.namespace.Namespace;\n");
-                wr.write("import be.belgipast.utilities.namespace.support.AbstractNamespaceSupport;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.support.AbstractNamespaceSupport;\n");
                 wr.write(String.format("public class %s extends AbstractNamespaceSupport{\n",def.getName()));
                 wr.write(String.format("    public %s (Namespace parent){\n",def.getName()));
-                wr.write(String.format("        super(\"%s\",null,parent);\n",def.getName()));
+                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
                 wr.write("    }\n");
                 wr.write("}\n");
+                wr.close();
             } catch (IOException ex) {
                 Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        if (!def.getSubNamespaces().isEmpty()){
+            generateCode(def.getSubNamespaces());
+        }
     }
-
+    
+    private void generateCode(Map<String, NamespaceDef> nss) {
+        for (NamespaceDef def : nss.values()){
+            generateCode(def);
+        }
+    }
 }
