@@ -66,6 +66,9 @@ public class NamespaceProcessorTest {
                         "@be.belgiplast.utilities.annotations.Namespace(name=\"test\",names={\n" +
                     "    @Name(name=\"foo\"),@Name(name=\"bar\")\n" +
                         "})\n" +
+                        "@be.belgiplast.utilities.annotations.Namespace(name=\"test2\",names={\n" +
+                    "    @Name(name=\"john\"),@Name(name=\"smith\")\n" +
+                        "},parent=\"test\")\n" +
                         "package be.belgiplast.utilities.annotations.processors;\n" +
                         "\n" +
                         "import be.belgiplast.utilities.annotations.Name;"));
@@ -86,6 +89,7 @@ public class NamespaceProcessorTest {
         }
         for (JavaFileObject jfo : compilation.generatedFiles()){
             System.out.println(jfo.getName());
+            
             
         }
     }

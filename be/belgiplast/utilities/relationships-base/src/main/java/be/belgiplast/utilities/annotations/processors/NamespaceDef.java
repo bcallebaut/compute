@@ -15,6 +15,7 @@ import java.util.Map;
 public class NamespaceDef {
     private NamespaceDef parent;
     private String name;
+    private String pkg;
     private final Map<String,NamespaceDef> subNamespaces = new HashMap<>();
     private final Map<String,NameDef> names = new HashMap<>();
 
@@ -32,6 +33,14 @@ public class NamespaceDef {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPackage() {
+        return pkg;
+    }
+
+    public void setPackage(String pkg) {
+        this.pkg = pkg;
     }
 
     public Map<String, NamespaceDef> getSubNamespaces() {
