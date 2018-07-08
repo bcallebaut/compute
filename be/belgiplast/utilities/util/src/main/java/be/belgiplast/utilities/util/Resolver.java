@@ -34,7 +34,7 @@ public final class Resolver<C> implements Resolvable<C>{
 
     @Override
     public final boolean resolve(C context) {
-        
+        this.context = context;
         if (executor != null){
             executor.execute(runnable);
             return resolvable.isEmpty();
