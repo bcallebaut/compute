@@ -11,14 +11,15 @@ import be.belgiplast.utilities.annotations.Name;
  *
  * @author T0194671
  */
-public class NameDef extends AbstractDefinition{
+public class RelationshipDef {
     private NamespaceDef parent;
+    private String name;
     private Class implementation;
 
-    public NameDef() {
+    public RelationshipDef() {
     }
 
-    public NameDef(Name n) {
+    public RelationshipDef(Name n) {
         name = n.name();
     }
     
@@ -28,6 +29,14 @@ public class NameDef extends AbstractDefinition{
 
     public void setParent(NamespaceDef parent) {
         this.parent = parent;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Class getImplementation() {

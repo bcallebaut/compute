@@ -12,9 +12,8 @@ import java.util.Map;
  *
  * @author T0194671
  */
-public class NamespaceDef {
+public class NamespaceDef extends AbstractDefinition {
     private NamespaceDef parent;
-    private String name;
     private String pkg;
     private final Map<String,NamespaceDef> subNamespaces = new HashMap<>();
     private final Map<String,NameDef> names = new HashMap<>();
@@ -27,13 +26,6 @@ public class NamespaceDef {
         this.parent = parent;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getPackage() {
         return pkg;

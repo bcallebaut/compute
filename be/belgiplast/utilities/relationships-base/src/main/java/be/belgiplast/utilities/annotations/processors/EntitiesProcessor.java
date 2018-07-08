@@ -34,7 +34,8 @@ import javax.tools.JavaFileObject;
  * @author T0194671
  */
 @SupportedAnnotationTypes(
-        {"be.belgiplast.utilities.annotations.Entity", "be.belgiplast.utilities.annotations.Relationship"})
+        {"be.belgiplast.utilities.annotations.Entity", "be.belgiplast.utilities.annotations.Relationship",
+        "be.belgiplast.utilities.annotations.Entities", "be.belgiplast.utilities.annotations.Relationships"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EntitiesProcessor extends AbstractProcessor {
 
@@ -42,6 +43,8 @@ public class EntitiesProcessor extends AbstractProcessor {
     private Elements elementUtils;
     private Filer filer;
     private Messager messager;
+    
+    Map<String,NamespaceDef> nss = new HashMap<>();
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -54,7 +57,7 @@ public class EntitiesProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Map<String,NamespaceDef> nss = new HashMap<>();
+        
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Namespace.class)) {
             Namespace ns = annotatedElement.getAnnotation(Namespace.class);
             NamespaceDef def = nss.get(ns.name());
