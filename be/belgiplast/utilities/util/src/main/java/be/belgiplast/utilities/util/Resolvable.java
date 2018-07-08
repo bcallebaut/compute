@@ -9,6 +9,6 @@ package be.belgiplast.utilities.util;
  *
  * @author benoit
  */
-public interface Resolvable {
-    <C> boolean resolve(C context);
+public interface Resolvable<C> {
+    boolean resolve(C context);
 }

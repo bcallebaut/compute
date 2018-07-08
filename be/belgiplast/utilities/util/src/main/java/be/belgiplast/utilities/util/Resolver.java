@@ -14,7 +14,7 @@ import java.util.concurrent.Executor;
  *
  * @author benoit
  */
-public final class Resolver<C> implements Resolvable{
+public final class Resolver<C> implements Resolvable<C>{
     private C context;
     private List<Resolvable> resolvable = new LinkedList<>();
     private Executor executor = null;
@@ -33,7 +33,7 @@ public final class Resolver<C> implements Resolvable{
     }
 
     @Override
-    public final <C> boolean resolve(C context) {
+    public final boolean resolve(C context) {
         
         if (executor != null){
             executor.execute(runnable);
