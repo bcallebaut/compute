@@ -17,11 +17,20 @@ import be.belgiplast.utilities.util.Resolver;
 public class EntityDef extends AbstractDefinition implements Resolvable<Context>{    
     private Resolver<Context> resolver;
     private NameDef type;
+    private String pkg;
     private Class implementation;
 
     public EntityDef(Entity entity) {
         super(entity.type());
         resolver = new Resolver<>(null);
+    }
+    
+    public String getPackage() {
+        return pkg;
+    }
+
+    public void setPackage(String pkg) {
+        this.pkg = pkg;
     }
 
     public NameDef getType() {

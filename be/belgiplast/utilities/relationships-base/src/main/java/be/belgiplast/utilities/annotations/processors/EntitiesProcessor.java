@@ -5,8 +5,13 @@
  */
 package be.belgiplast.utilities.annotations.processors;
 
+import be.belgiplast.utilities.annotations.Entities;
+import be.belgiplast.utilities.annotations.Entity;
 import be.belgiplast.utilities.annotations.Name;
 import be.belgiplast.utilities.annotations.Namespace;
+import be.belgiplast.utilities.annotations.Namespaces;
+import be.belgiplast.utilities.annotations.Relationship;
+import be.belgiplast.utilities.annotations.Relationships;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
@@ -24,6 +29,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -43,6 +49,7 @@ public class EntitiesProcessor extends AbstractProcessor {
     private Elements elementUtils;
     private Filer filer;
     private Messager messager;
+    private Context context;
     
     Map<String,NamespaceDef> nss = new HashMap<>();
 
@@ -54,43 +61,125 @@ public class EntitiesProcessor extends AbstractProcessor {
         filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
     }
-
+    
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        context = new Context();
         
-        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Namespace.class)) {
-            Namespace ns = annotatedElement.getAnnotation(Namespace.class);
-            NamespaceDef def = nss.get(ns.name());
-            if (def == null){
-                def = new NamespaceDef();
-                def.setName(ns.name());
-                nss.put(ns.name(),def);
-            }
-            if (ns.parent() != ""){
-                NamespaceDef parent = nss.get(ns.parent());
-                if (parent == null){
-                    parent = new NamespaceDef();
-                    parent.setName(ns.parent());
-                    nss.put(ns.parent(),parent);
-                }
-                parent.addNamespace(def);
-            }
-            for (Name n : ns.names()){
-                NameDef ndef = new NameDef(n);
-                def.addName(ndef);
-            }
-        }
-        //remove non root Namespace definitions
-        Iterator<NamespaceDef> it = nss.values().iterator();
-        while (it.hasNext()){
-            NamespaceDef def = it.next();
-            if (def.getParent() != null)
-                nss.remove(def.getName());
-        }
+        retrieveNamespaces(roundEnv);
+        retrieveEntities(roundEnv);
+        retrieveRelationships(roundEnv);
+        cleanNamespaces();
         
         generateCode(nss);
         
         return true;
+    }
+    
+    private void retrieveEntities(RoundEnvironment roundEnv) {
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Entities.class)) {
+
+            String packagePrefix = "";
+            if (annotatedElement instanceof PackageElement){
+                packagePrefix = ((PackageElement)annotatedElement).getQualifiedName().toString();
+                for (Entity ns2 : annotatedElement.getAnnotationsByType(Entity.class)){
+                    processAnnotation(ns2, packagePrefix);
+                }
+            }else if (annotatedElement instanceof TypeElement){
+                packagePrefix = ((TypeElement)annotatedElement).getQualifiedName().toString();
+                Entity ns = annotatedElement.getAnnotation(Entity.class);
+                processAnnotation( ns, packagePrefix);
+            }
+
+        }
+    }
+    
+    private void retrieveRelationships(RoundEnvironment roundEnv) {
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Relationships.class)) {
+
+            String packagePrefix = "";
+            if (annotatedElement instanceof PackageElement){
+                packagePrefix = ((PackageElement)annotatedElement).getQualifiedName().toString();
+                for (Relationship ns2 : annotatedElement.getAnnotationsByType(Relationship.class)){
+                    processAnnotation(ns2, packagePrefix);
+                }
+            }else if (annotatedElement instanceof TypeElement){
+                packagePrefix = ((TypeElement)annotatedElement).getQualifiedName().toString();
+                Relationship ns = annotatedElement.getAnnotation(Relationship.class);
+                processAnnotation( ns, packagePrefix);
+            }
+        }
+    }
+
+    private void retrieveNamespaces(RoundEnvironment roundEnv) {
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Namespaces.class)) {
+            
+            String packagePrefix = "";
+            if (annotatedElement instanceof PackageElement){
+                packagePrefix = ((PackageElement)annotatedElement).getQualifiedName().toString();
+                for (Namespace ns2 : annotatedElement.getAnnotationsByType(Namespace.class)){
+                    processAnnotation(ns2, packagePrefix);
+                }
+            }else if (annotatedElement instanceof TypeElement){
+                packagePrefix = ((TypeElement)annotatedElement).getQualifiedName().toString();
+                Namespace ns = annotatedElement.getAnnotation(Namespace.class);
+                processAnnotation( ns, packagePrefix);
+            }
+            
+        }
+    }
+    
+    private void processAnnotation( Entity ns, String packagePrefix) {
+        EntityDef def = context.getEntities().get(ns.type());
+        if (def == null){
+            def = new EntityDef(ns);
+            def.setName(ns.type());
+            context.getEntities().put(ns.type(),def);
+        }
+        def.setPackage(packagePrefix);
+    }
+    
+    private void processAnnotation( Relationship ns, String packagePrefix) {
+        RelationshipDef def = context.getRelationships().get(ns.type());
+        if (def == null){
+            def = new RelationshipDef(ns);
+            def.setName(ns.type());
+            context.getRelationships().put(ns.type(),def);
+        }
+        def.setPackage(packagePrefix);
+    }
+
+    private void processAnnotation( Namespace ns, String packagePrefix) {
+        NamespaceDef def = context.getNamespaces().get(ns.name());
+        if (def == null){
+            def = new NamespaceDef();
+            def.setName(ns.name());
+            context.getNamespaces().put(ns.name(),def);
+        }
+        def.setPackage(packagePrefix);
+        if (ns.parent() != ""){
+            NamespaceDef parent = context.getNamespaces().get(ns.parent());
+            if (parent == null){
+                parent = new NamespaceDef();
+                parent.setName(ns.parent());
+                context.getNamespaces().put(ns.parent(),parent);
+            }
+            parent.addNamespace(def);
+        }
+        for (Name n : ns.names()){
+            NameDef ndef = new NameDef(n);
+            def.addName(ndef);
+        }
+    }
+    
+    private void cleanNamespaces() {
+        //remove non root Namespace definitions
+        Iterator<NamespaceDef> it = context.getNamespaces().values().iterator();
+        while (it.hasNext()){
+            NamespaceDef def = it.next();
+            if (def.getParent() != null)
+                it.remove();
+        }
     }
     
     private String createClassname(NamespaceDef def){
