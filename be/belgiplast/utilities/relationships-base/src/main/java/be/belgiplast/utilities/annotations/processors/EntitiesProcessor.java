@@ -71,7 +71,7 @@ public class EntitiesProcessor extends AbstractProcessor {
         retrieveRelationships(roundEnv);
         cleanNamespaces();
         
-        generateCode(nss);
+        generateCode();
         
         return true;
     }
@@ -183,36 +183,215 @@ public class EntitiesProcessor extends AbstractProcessor {
     }
     
     private String createClassname(NamespaceDef def){
+        
         StringBuilder builder = new StringBuilder();
-        NamespaceDef current = def;
-        while (current != null){
-            builder = builder.insert(0, current.getName());
-            current = current.getParent();
-            if (current != null)
-                builder.insert(0,"/");
+        if (def.getPackage() != null && !def.getPackage().isEmpty()){
+            builder.append(def.getPackage());
+            builder.append(".");
         }
+        String name = getShortName(def);
+        builder.append(name);
         return builder.toString();
     }
 
-    private void generateCode(Map<String, NamespaceDef> nss) {
-        for (NamespaceDef def : nss.values()){
+    private String getShortName(NamespaceDef def) {
+        String name = def.getName();
+        name = name.substring(0,1).toUpperCase() + name.substring(1);
+        return name;
+    }
+    
+    private String createFilename(NamespaceDef def){
+        String name = createClassname(def);
+        name.replaceAll(".", "/");
+        return name;
+    }
+    
+    private String createClassname(NameDef def){        
+        StringBuilder builder = new StringBuilder();
+        if (def.getParent().getPackage() != null && !def.getParent().getPackage().isEmpty()){
+            builder.append(def.getParent().getPackage());
+            builder.append(".");
+        }
+        String name = getShortName(def);
+        builder.append(name);
+        return builder.toString();
+    }
+    
+    private String createClassname(EntityDef def){
+        StringBuilder builder = new StringBuilder();
+        if (def.getPackage() != null && !def.getPackage().isEmpty()){
+            builder.append(def.getPackage());
+            builder.append(".");
+        }
+        String name = getShortName(def);
+        builder.append(name);
+        return builder.toString();
+    }
+    
+    private String createClassname(RelationshipDef def){
+        StringBuilder builder = new StringBuilder();
+        if (def.getPackage() != null && !def.getPackage().isEmpty()){
+            builder.append(def.getPackage());
+            builder.append(".");
+        }
+        String name = getShortName(def);
+        builder.append(name);
+        return builder.toString();
+    }
+
+    private String getShortName(AbstractDefinition def) {
+        String name = def.getName();
+        name = name.substring(0,1).toUpperCase() + name.substring(1);
+        return name;
+    }
+    
+    private String createFilename(NameDef def){
+        String name = createClassname(def);
+        name.replaceAll(".", "/");
+        return name;
+    }
+    
+    private String createFilename(EntityDef def){
+        String name = createClassname(def);
+        name.replaceAll(".", "/");
+        return name;
+    }
+    
+    private String createFilename(RelationshipDef def){
+        String name = createClassname(def);
+        name.replaceAll(".", "/");
+        return name;
+    }
+
+    private void generateNamespaceCode(NamespaceDef def) {
+        if (def.getName().length() > 0){
             try {
-                String classname = createClassname(def);
-                JavaFileObject fo = filer.createSourceFile(classname);
+                String classname = getShortName(def);
+                JavaFileObject fo = filer.createSourceFile(createFilename(def));
                 Writer wr = fo.openWriter();
                 wr.write("package ");
-                wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                wr.write(def.getPackage());
+                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
                 wr.write(";\n");
-                wr.write("import be.belgipast.utilities.relationships.Entity;\n");
-                wr.write("import be.belgipast.utilities.relationships.support.EntitySupport;\n");
-                wr.write(String.format("public class %s extends EntitySupport{\n",def.getName()));
-                wr.write(String.format("    public %s (Namespace parent){\n",def.getName()));
+                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.support.AbstractNamespaceSupport;\n");
+                wr.write(String.format("public class %s extends AbstractNamespaceSupport{\n",classname));
+                wr.write(String.format("    public %s (Namespace parent){\n",classname));
                 wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                for (NamespaceDef d : def.getSubNamespaces().values()){
+                    wr.write(String.format("        addNamespace(new "+ d.getPackage() +"."+getShortName(d) +"(this));\n",def.getName()));
+                }
+                for (NameDef d : def.getNames().values()){
+                    wr.write(String.format("        addName(new "+ def.getPackage() +"."+getShortName(d) +"(this));\n",d.getName()));
+                }
+                
                 wr.write("    }\n");
                 wr.write("}\n");
+                wr.close();
+            } catch (IOException ex) {
+                Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (!def.getSubNamespaces().isEmpty()){
+            for (NamespaceDef n : def.getSubNamespaces().values())
+            generateNamespaceCode(n);
+        }
+        
+        if (!def.getNames().isEmpty()){
+            for (NameDef nd: def.getNames().values())
+                generateNameCode(nd);
+        }
+    }
+    
+    private void generateNameCode(NameDef def) {
+        if (def.getName().length() > 0){
+            try {
+                String classname = getShortName(def);
+                JavaFileObject fo = filer.createSourceFile(createFilename(def));
+                Writer wr = fo.openWriter();
+                wr.write("package ");
+                wr.write(def.getParent().getPackage());
+                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                wr.write(";\n");
+                wr.write("import be.belgiplast.utilities.namespaces.Name;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.support.AbstractNameSupport;\n");
+                wr.write(String.format("public class %s extends AbstractNameSupport{\n",classname));
+                wr.write(String.format("    public %s (Namespace parent){\n",classname));
+                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                
+                wr.write("    }\n");
+                wr.write("}\n");
+                wr.close();
             } catch (IOException ex) {
                 Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+    
+    private void generateEntityCode(EntityDef def) {
+        if (def.getName().length() > 0){
+            try {
+                String classname = getShortName(def);
+                JavaFileObject fo = filer.createSourceFile(createFilename(def));
+                Writer wr = fo.openWriter();
+                wr.write("package ");
+                wr.write(def.getPackage());
+                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                wr.write(";\n");
+                wr.write("import be.belgiplast.utilities.namespaces.Name;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                wr.write("import be.belgiplast.utilities.relationships.support.EntitySupport;\n");
+                wr.write(String.format("public class %s extends EntitySupport{\n",classname));
+                wr.write(String.format("    public %s (Namespace parent){\n",classname));
+                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                
+                wr.write("    }\n");
+                wr.write("}\n");
+                wr.close();
+            } catch (IOException ex) {
+                Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void generateRelationshipCode(RelationshipDef def) {
+        if (def.getName().length() > 0){
+            try {
+                String classname = getShortName(def);
+                JavaFileObject fo = filer.createSourceFile(createFilename(def));
+                Writer wr = fo.openWriter();
+                wr.write("package ");
+                wr.write(def.getPackage());
+                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                wr.write(";\n");
+                wr.write("import be.belgiplast.utilities.namespaces.Name;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                wr.write("import be.belgiplast.utilities.relationships.support.RenationshipSupport;\n");
+                wr.write(String.format("public class %s extends RelationshipSupport{\n",classname));
+                wr.write(String.format("    public %s (Namespace parent){\n",classname));
+                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                
+                wr.write("    }\n");
+                wr.write("}\n");
+                wr.close();
+            } catch (IOException ex) {
+                Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void generateCode() {
+        for (NamespaceDef def : context.getNamespaces().values()){
+            generateNamespaceCode(def);
+        }
+        for (EntityDef def : context.getEntities().values()){
+            generateEntityCode(def);
+        }
+        for (RelationshipDef def : context.getRelationships().values()){
+            generateRelationshipCode(def);
+        }
+    }
+    
+    
 }

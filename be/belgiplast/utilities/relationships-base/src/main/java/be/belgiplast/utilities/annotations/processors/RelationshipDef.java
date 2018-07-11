@@ -14,9 +14,8 @@ import be.belgiplast.utilities.util.Resolver;
  *
  * @author T0194671
  */
-public class RelationshipDef implements Resolvable<Context>{
+public class RelationshipDef extends AbstractDefinition implements Resolvable<Context>{
     private NamespaceDef parent;
-    private String name;
     private Name n;
     private String pkg;
     private Class implementation;
@@ -52,14 +51,6 @@ public class RelationshipDef implements Resolvable<Context>{
 
     public void setParent(NamespaceDef parent) {
         this.parent = parent;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Class getImplementation() {
