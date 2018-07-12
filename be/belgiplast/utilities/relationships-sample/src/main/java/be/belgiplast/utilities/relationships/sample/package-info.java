@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 @Namespace(name="test",names={@Name(name="Foo"),@Name(name="Bar")})
+@Namespace(name="test",names={@Name(name="John"),@Name(name="Smith")})
 @Entity(type="Foo")        
-@Entity(type="Foo")
 @Relationship(type="Bar")
 package be.belgiplast.utilities.relationships.sample;
 
