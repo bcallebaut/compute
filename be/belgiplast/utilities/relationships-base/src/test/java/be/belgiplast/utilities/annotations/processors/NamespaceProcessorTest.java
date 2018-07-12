@@ -61,17 +61,22 @@ public class NamespaceProcessorTest {
         //URL url = Resources.getResource("package-info.java");
         Compilation compilation;
         compilation = javac()
-                .withProcessors(new NamespaceProcessor())
+                .withProcessors(new EntitiesProcessor())
                 .compile(JavaFileObjects.forSourceLines("be.belgiplast.utilities.annotations.processors.package-info", 
                         "@be.belgiplast.utilities.annotations.Namespace(name=\"test\",names={\n" +
                     "    @Name(name=\"foo\"),@Name(name=\"bar\")\n" +
                         "})\n" +
                         "@be.belgiplast.utilities.annotations.Namespace(name=\"test2\",names={\n" +
                     "    @Name(name=\"john\"),@Name(name=\"smith\")\n" +
-                        "},parent=\"test\")\n" +
+                        "},parent=\"test\")"
+                    +   "@Entity(type=\"Foo\")        \n" +
+                        "@Relationship(type=\"Bar\")\n" +
                         "package be.belgiplast.utilities.annotations.processors;\n" +
                         "\n" +
-                        "import be.belgiplast.utilities.annotations.Name;"));
+                        "import be.belgiplast.utilities.annotations.Name;" +
+                        "import be.belgiplast.utilities.annotations.Namespace;"+
+                        "import be.belgiplast.utilities.annotations.Entity;"+
+                        "import be.belgiplast.utilities.annotations.Relationship;"));
         for (JavaFileObject jfo : compilation.sourceFiles()){
             System.out.println(jfo.getName());
         }

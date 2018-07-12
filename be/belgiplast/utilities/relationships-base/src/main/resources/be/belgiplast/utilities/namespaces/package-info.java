@@ -5,9 +5,6 @@
  */
 
 
-@be.belgiplast.utilities.annotations.Namespace(name="test",names={
-    @Name(name="foo"),@Name(name="bar")
-})
 package be.belgiplast.utilities.namespaces;
 
 import be.belgiplast.utilities.annotations.Name;

@@ -92,10 +92,39 @@ public class EntitiesProcessor extends AbstractProcessor {
             }
 
         }
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Entity.class)) {
+
+            String packagePrefix = "";
+            if (annotatedElement instanceof PackageElement){
+                packagePrefix = ((PackageElement)annotatedElement).getQualifiedName().toString();
+                for (Entity ns2 : annotatedElement.getAnnotationsByType(Entity.class)){
+                    processAnnotation(ns2, packagePrefix);
+                }
+            }else if (annotatedElement instanceof TypeElement){
+                packagePrefix = ((TypeElement)annotatedElement).getQualifiedName().toString();
+                Entity ns = annotatedElement.getAnnotation(Entity.class);
+                processAnnotation( ns, packagePrefix);
+            }
+
+        }
     }
     
     private void retrieveRelationships(RoundEnvironment roundEnv) {
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Relationships.class)) {
+
+            String packagePrefix = "";
+            if (annotatedElement instanceof PackageElement){
+                packagePrefix = ((PackageElement)annotatedElement).getQualifiedName().toString();
+                for (Relationship ns2 : annotatedElement.getAnnotationsByType(Relationship.class)){
+                    processAnnotation(ns2, packagePrefix);
+                }
+            }else if (annotatedElement instanceof TypeElement){
+                packagePrefix = ((TypeElement)annotatedElement).getQualifiedName().toString();
+                Relationship ns = annotatedElement.getAnnotation(Relationship.class);
+                processAnnotation( ns, packagePrefix);
+            }
+        }
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Relationship.class)) {
 
             String packagePrefix = "";
             if (annotatedElement instanceof PackageElement){
@@ -333,18 +362,18 @@ public class EntitiesProcessor extends AbstractProcessor {
         if (def.getName().length() > 0){
             try {
                 String classname = getShortName(def);
-                JavaFileObject fo = filer.createSourceFile(createFilename(def));
+                JavaFileObject fo = filer.createSourceFile(createFilename(def)+"Entity");
                 Writer wr = fo.openWriter();
                 wr.write("package ");
                 wr.write(def.getPackage());
                 //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
                 wr.write(";\n");
-                wr.write("import be.belgiplast.utilities.namespaces.Name;\n");
                 wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                wr.write("import be.belgiplast.utilities.namespaces.SystemNamespace;\n");
                 wr.write("import be.belgiplast.utilities.relationships.support.EntitySupport;\n");
-                wr.write(String.format("public class %s extends EntitySupport{\n",classname));
-                wr.write(String.format("    public %s (Namespace parent){\n",classname));
-                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                wr.write(String.format("public class %sEntity extends EntitySupport{\n",classname));
+                wr.write(String.format("    public %sEntity(String name,Namespace parent){\n",classname));
+                wr.write(String.format("        super(SystemNamespace.getInstance().getName(\"%s\"),name,parent);\n",def.getName()));
                 
                 wr.write("    }\n");
                 wr.write("}\n");
@@ -359,7 +388,7 @@ public class EntitiesProcessor extends AbstractProcessor {
         if (def.getName().length() > 0){
             try {
                 String classname = getShortName(def);
-                JavaFileObject fo = filer.createSourceFile(createFilename(def));
+                JavaFileObject fo = filer.createSourceFile(createFilename(def)+"Relationship");
                 Writer wr = fo.openWriter();
                 wr.write("package ");
                 wr.write(def.getPackage());
@@ -367,10 +396,11 @@ public class EntitiesProcessor extends AbstractProcessor {
                 wr.write(";\n");
                 wr.write("import be.belgiplast.utilities.namespaces.Name;\n");
                 wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
-                wr.write("import be.belgiplast.utilities.relationships.support.RenationshipSupport;\n");
-                wr.write(String.format("public class %s extends RelationshipSupport{\n",classname));
-                wr.write(String.format("    public %s (Namespace parent){\n",classname));
-                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                wr.write("import be.belgiplast.utilities.namespaces.SystemNamespace;\n");
+                wr.write("import be.belgiplast.utilities.relationships.support.RelationshipSupport;\n");
+                wr.write(String.format("public class %sRelationship extends RelationshipSupport{\n",classname));
+                wr.write(String.format("    public %sRelationship (String name,Namespace parent){\n",classname));
+                wr.write(String.format("        super(parent,name,SystemNamespace.getInstance().getName(\"%s\"));\n",def.getName()));
                 
                 wr.write("    }\n");
                 wr.write("}\n");
