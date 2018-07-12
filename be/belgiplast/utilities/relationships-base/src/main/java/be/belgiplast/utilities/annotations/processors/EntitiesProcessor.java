@@ -318,7 +318,7 @@ public class EntitiesProcessor extends AbstractProcessor {
                 wr.write("}\n");
                 wr.close();
             } catch (IOException ex) {
-                Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EntitiesProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         if (!def.getSubNamespaces().isEmpty()){
@@ -353,7 +353,7 @@ public class EntitiesProcessor extends AbstractProcessor {
                 wr.write("}\n");
                 wr.close();
             } catch (IOException ex) {
-                Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EntitiesProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -379,7 +379,7 @@ public class EntitiesProcessor extends AbstractProcessor {
                 wr.write("}\n");
                 wr.close();
             } catch (IOException ex) {
-                Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EntitiesProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -406,7 +406,7 @@ public class EntitiesProcessor extends AbstractProcessor {
                 wr.write("}\n");
                 wr.close();
             } catch (IOException ex) {
-                Logger.getLogger(NamespaceProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EntitiesProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

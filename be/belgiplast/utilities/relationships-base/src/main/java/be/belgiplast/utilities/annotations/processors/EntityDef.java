@@ -7,7 +7,6 @@ package be.belgiplast.utilities.annotations.processors;
 
 import be.belgiplast.utilities.util.Resolvable;
 import be.belgiplast.utilities.annotations.Entity;
-import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.util.Resolver;
 
 /**
@@ -49,6 +48,4 @@ public class EntityDef extends AbstractDefinition implements Resolvable<Context>
     public boolean resolve(Context context) {
         return resolver.resolve(context);
     }
-    
-    
 }
