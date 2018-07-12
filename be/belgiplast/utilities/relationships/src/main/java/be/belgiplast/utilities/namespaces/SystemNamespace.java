@@ -28,4 +28,19 @@ public final class SystemNamespace extends AbstractNamespaceSupport implements N
         for (NamespaceProvider provider : loader)
             addNamespace(provider.getNamespace(this));
     }
+    
+    public Name getName(String name){
+        String[] names = name.split("\\056");
+        Namespace n = this;
+        for (int i = 0; i < names.length ; i++){
+            if (i < names.length - 1){
+                n = n.findNamespaceByName(names[i]);
+                if (n == null)
+                    return null;
+            }else{
+                return n.findNameByName(names[i]);
+            }
+        }
+        return null;
+    }
 }
