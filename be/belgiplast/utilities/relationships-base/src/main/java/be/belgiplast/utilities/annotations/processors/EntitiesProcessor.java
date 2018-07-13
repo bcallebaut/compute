@@ -297,38 +297,40 @@ public class EntitiesProcessor extends AbstractProcessor {
             try {
                 String classname = getShortName(def);
                 JavaFileObject fo = filer.createSourceFile(createFilename(def));
-                Writer wr = fo.openWriter();
-                wr.write("package ");
-                wr.write(def.getPackage());
-                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
-                wr.write(";\n");
-                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
-                wr.write("import be.belgiplast.utilities.namespaces.support.AbstractNamespaceSupport;\n");
-                wr.write(String.format("public class %s extends AbstractNamespaceSupport{\n",classname));
-                wr.write(String.format("    public %s (Namespace parent){\n",classname));
-                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
-                for (NamespaceDef d : def.getSubNamespaces().values()){
-                    wr.write(String.format("        addNamespace(new "+ d.getPackage() +"."+getShortName(d) +"(this));\n",def.getName()));
+                try (Writer wr = fo.openWriter()) {
+                    wr.write("package ");
+                    wr.write(def.getPackage());
+                    //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                    wr.write(";\n");
+                    wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                    wr.write("import be.belgiplast.utilities.namespaces.support.AbstractNamespaceSupport;\n");
+                    wr.write(String.format("public class %s extends AbstractNamespaceSupport{\n",classname));
+                    wr.write(String.format("    public %s (Namespace parent){\n",classname));
+                    wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                    for (NamespaceDef d : def.getSubNamespaces().values()){
+                        wr.write(String.format("        addNamespace(new "+ d.getPackage() +"."+getShortName(d) +"(this));\n",def.getName()));
+                    }
+                    for (NameDef d : def.getNames().values()){
+                        wr.write(String.format("        addName(new "+ def.getPackage() +"."+getShortName(d) +"(this));\n",d.getName()));
+                    }
+                    
+                    wr.write("    }\n");
+                    wr.write("}\n");
                 }
-                for (NameDef d : def.getNames().values()){
-                    wr.write(String.format("        addName(new "+ def.getPackage() +"."+getShortName(d) +"(this));\n",d.getName()));
-                }
-                
-                wr.write("    }\n");
-                wr.write("}\n");
-                wr.close();
             } catch (IOException ex) {
                 Logger.getLogger(EntitiesProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         if (!def.getSubNamespaces().isEmpty()){
-            for (NamespaceDef n : def.getSubNamespaces().values())
-            generateNamespaceCode(n);
+            def.getSubNamespaces().values().forEach((n) -> {
+                generateNamespaceCode(n);
+            });
         }
         
         if (!def.getNames().isEmpty()){
-            for (NameDef nd: def.getNames().values())
+            def.getNames().values().forEach((nd) -> {
                 generateNameCode(nd);
+            });
         }
     }
     
@@ -337,21 +339,21 @@ public class EntitiesProcessor extends AbstractProcessor {
             try {
                 String classname = getShortName(def);
                 JavaFileObject fo = filer.createSourceFile(createFilename(def));
-                Writer wr = fo.openWriter();
-                wr.write("package ");
-                wr.write(def.getParent().getPackage());
-                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
-                wr.write(";\n");
-                wr.write("import be.belgiplast.utilities.namespaces.Name;\n");
-                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
-                wr.write("import be.belgiplast.utilities.namespaces.support.AbstractNameSupport;\n");
-                wr.write(String.format("public class %s extends AbstractNameSupport{\n",classname));
-                wr.write(String.format("    public %s (Namespace parent){\n",classname));
-                wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
-                
-                wr.write("    }\n");
-                wr.write("}\n");
-                wr.close();
+                try (Writer wr = fo.openWriter()) {
+                    wr.write("package ");
+                    wr.write(def.getParent().getPackage());
+                    //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                    wr.write(";\n");
+                    wr.write("import be.belgiplast.utilities.namespaces.Name;\n");
+                    wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                    wr.write("import be.belgiplast.utilities.namespaces.support.AbstractNameSupport;\n");
+                    wr.write(String.format("public class %s extends AbstractNameSupport{\n",classname));
+                    wr.write(String.format("    public %s (Namespace parent){\n",classname));
+                    wr.write(String.format("        super(\"%s\",parent);\n",def.getName()));
+                    
+                    wr.write("    }\n");
+                    wr.write("}\n");
+                }
             } catch (IOException ex) {
                 Logger.getLogger(EntitiesProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -363,21 +365,21 @@ public class EntitiesProcessor extends AbstractProcessor {
             try {
                 String classname = getShortName(def);
                 JavaFileObject fo = filer.createSourceFile(createFilename(def)+"Entity");
-                Writer wr = fo.openWriter();
-                wr.write("package ");
-                wr.write(def.getPackage());
-                //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
-                wr.write(";\n");
-                wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
-                wr.write("import be.belgiplast.utilities.namespaces.SystemNamespace;\n");
-                wr.write("import be.belgiplast.utilities.relationships.support.EntitySupport;\n");
-                wr.write(String.format("public class %sEntity extends EntitySupport{\n",classname));
-                wr.write(String.format("    public %sEntity(String name,Namespace parent){\n",classname));
-                wr.write(String.format("        super(SystemNamespace.getInstance().getName(\"%s\"),name,parent);\n",def.getName()));
-                
-                wr.write("    }\n");
-                wr.write("}\n");
-                wr.close();
+                try (Writer wr = fo.openWriter()) {
+                    wr.write("package ");
+                    wr.write(def.getPackage());
+                    //wr.write(classname.substring(0,classname.lastIndexOf("/")).replaceAll("/", "."));
+                    wr.write(";\n");
+                    wr.write("import be.belgiplast.utilities.namespaces.Namespace;\n");
+                    wr.write("import be.belgiplast.utilities.namespaces.SystemNamespace;\n");
+                    wr.write("import be.belgiplast.utilities.relationships.support.EntitySupport;\n");
+                    wr.write(String.format("public class %sEntity extends EntitySupport{\n",classname));
+                    wr.write(String.format("    public %sEntity(String name,Namespace parent){\n",classname));
+                    wr.write(String.format("        super(SystemNamespace.getInstance().getName(\"%s\"),name,parent);\n",def.getName()));
+                    
+                    wr.write("    }\n");
+                    wr.write("}\n");
+                }
             } catch (IOException ex) {
                 Logger.getLogger(EntitiesProcessor.class.getName()).log(Level.SEVERE, null, ex);
             }

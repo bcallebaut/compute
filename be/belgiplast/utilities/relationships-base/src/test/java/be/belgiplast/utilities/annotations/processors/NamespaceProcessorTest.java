@@ -5,27 +5,20 @@
  */
 package be.belgiplast.utilities.annotations.processors;
 
-import com.google.common.io.Resources;
 import com.google.testing.compile.Compilation;
 import static com.google.testing.compile.Compiler.javac;
 import com.google.testing.compile.JavaFileObjects;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
