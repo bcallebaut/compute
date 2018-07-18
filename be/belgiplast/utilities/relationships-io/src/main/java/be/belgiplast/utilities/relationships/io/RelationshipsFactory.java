@@ -5,6 +5,7 @@
  */
 package be.belgiplast.utilities.relationships.io;
 
+import be.belgiplast.utilities.relationships.Entities;
 import be.belgiplast.utilities.relationships.Entity;
 import be.belgiplast.utilities.relationships.Relationship;
 
@@ -15,4 +16,5 @@ import be.belgiplast.utilities.relationships.Relationship;
 public interface RelationshipsFactory {
     Entity createEntity(String type, String name);
     Relationship createRelationship(String type,String id);
+    Entities createEntities();
 }

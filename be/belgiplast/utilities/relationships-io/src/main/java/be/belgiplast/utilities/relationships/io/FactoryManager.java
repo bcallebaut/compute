@@ -8,6 +8,7 @@ package be.belgiplast.utilities.relationships.io;
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.relationships.DynamicEntity;
 import be.belgiplast.utilities.relationships.DynamicRelationship;
+import be.belgiplast.utilities.relationships.Entities;
 import be.belgiplast.utilities.relationships.Entity;
 import be.belgiplast.utilities.relationships.Relationship;
 import be.belgiplast.utilities.relationships.io.spi.FactoryProvider;
@@ -41,6 +42,8 @@ public abstract class FactoryManager implements RelationshipsFactory{
             return new DynamicEntity(namespace.findNameByName(type),name,homeNamespace);
         return factory.createEntity(type, name);
     }
+    
+    public abstract Entities createEntities();
 
     @Override
     public Relationship createRelationship(String type,String id) {
@@ -63,6 +66,11 @@ public abstract class FactoryManager implements RelationshipsFactory{
                     relationshipsfactories.put(name,factory);
                 });
             }
+        }
+
+        @Override
+        public Entities createEntities() {
+            return new 
         }
 
         public Namespace getNamespace() {
