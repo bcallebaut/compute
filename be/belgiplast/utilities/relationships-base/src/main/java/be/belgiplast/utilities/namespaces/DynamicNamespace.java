@@ -42,5 +42,14 @@ public class DynamicNamespace extends AbstractNamespaceSupport implements Namesp
         }
         return result;
     }
-    
+
+    @Override
+    public void addNamespace(Namespace name) {
+        super.addNamespace(name); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addName(Name name) {
+        super.addName(name); //To change body of generated methods, choose Tools | Templates.
+    } 
 }
