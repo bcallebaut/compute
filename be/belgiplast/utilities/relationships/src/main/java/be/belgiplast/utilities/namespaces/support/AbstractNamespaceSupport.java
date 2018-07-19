@@ -74,7 +74,7 @@ public class AbstractNamespaceSupport implements Namespace{
     }
 
     @Override
-    public Collection<Name> getNames() {
+    public Collection<? extends Name> getNames() {
         ArrayList<Name> ns = new ArrayList<>();
         for (NamedItem ni : items.values())
             if (ni instanceof Name) ns.add((Name)ni);

@@ -14,7 +14,7 @@ import java.util.Collection;
 public interface Namespace extends NamedItem{
     Collection<? extends NamedItem> getChildren();
     Collection<Namespace> getNamespaces();
-    Collection<Name> getNames();
+    Collection<? extends Name> getNames();
     
     <E extends NamedItem> E findByName(String name);
     Name findNameByName(String name);
