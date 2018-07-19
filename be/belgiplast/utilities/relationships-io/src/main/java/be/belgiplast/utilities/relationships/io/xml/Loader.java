@@ -7,8 +7,8 @@ package be.belgiplast.utilities.relationships.io.xml;
 
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.relationships.Entities;
+import be.belgiplast.utilities.relationships.io.DefaultEntities;
 import be.belgiplast.utilities.relationships.io.FactoryManager;
-import be.belgiplast.utilities.relationships.io.RelationshipsFactory;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,15 +43,13 @@ public class Loader {
     }
     
     public Entities load(InputStream is){
-        Entities result = null;
+        Entities result = mgr.createEntities();
         
         try {
             Graph gr = storage.unmarshal(is);
             
             for (Entity xmlEntity : gr.getEntities()){
                 be.belgiplast.utilities.relationships.Entity entity = mgr.createEntity(xmlEntity.getType(), xmlEntity.getName());
-                
-                
             }
         } catch (JAXBException ex) {
             Logger.getLogger(Loader.class.getName()).log(Level.SEVERE, null, ex);
@@ -76,6 +74,11 @@ public class Loader {
 
         public void setHomeNamespace(Namespace homeNamespace) {
             this.homeNamespace = homeNamespace;
+        }
+
+        @Override
+        public Entities createEntities() {
+            return new DefaultEntities();
         }
     }
 }

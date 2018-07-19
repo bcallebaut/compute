@@ -70,7 +70,7 @@ public abstract class FactoryManager implements RelationshipsFactory{
 
         @Override
         public Entities createEntities() {
-            return new 
+            return new DefaultEntities();
         }
 
         public Namespace getNamespace() {

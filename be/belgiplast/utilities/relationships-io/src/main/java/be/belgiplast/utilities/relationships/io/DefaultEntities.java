@@ -5,10 +5,12 @@
  */
 package be.belgiplast.utilities.relationships.io;
 
+import be.belgiplast.utilities.namespaces.DynamicNamespace;
 import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.namespaces.support.AbstractNamespaceSupport;
 import be.belgiplast.utilities.relationships.DynamicEntity;
+import be.belgiplast.utilities.relationships.DynamicRelationship;
 import be.belgiplast.utilities.relationships.Entities;
 import be.belgiplast.utilities.relationships.Entity;
 import be.belgiplast.utilities.relationships.Relationship;
@@ -23,6 +25,10 @@ import java.util.Collection;
 public class DefaultEntities extends AbstractNamespaceSupport implements Entities<Name>{
 
     private String name;
+    private DynamicNamespace entities;
+    private DynamicNamespace relationships;
+    private DynamicNamespace names;
+    
     private final DefaultEntityFactory entityFactory;
     private final DefaultRelationshipFactory relationshipFactory;
 
@@ -32,8 +38,15 @@ public class DefaultEntities extends AbstractNamespaceSupport implements Entitie
 
     public DefaultEntities(String name) {
         super(name,null);
+        entities = new DynamicNamespace("entities",this);
+        relationships = new DynamicNamespace("relationships",this);
+        names = new DynamicNamespace("names",this);
         entityFactory = new DefaultEntityFactory(this);
         relationshipFactory = new DefaultRelationshipFactory(this);
+    }
+
+    public DynamicNamespace getRelationships() {
+        return relationships;
     }
 
     @Override
@@ -48,7 +61,15 @@ public class DefaultEntities extends AbstractNamespaceSupport implements Entitie
 
     @Override
     public Collection<Entity<Name>> getEntities() {
-        return (Collection<Entity<Name>>)super.getNames();
+        return (Collection<Entity<Name>>)entities.getNames();
+    }
+    
+    public Entity createEntity(String name){
+        return entityFactory.createEntity(name);
+    }
+
+    public final Relationship createRelationship(String name) {
+        return relationshipFactory.createRelationship(name);
     }
     
     private class DefaultEntityFactory extends EntityFactory{
@@ -60,7 +81,7 @@ public class DefaultEntities extends AbstractNamespaceSupport implements Entitie
         @Override
         protected Entity newInstance(String name, Namespace namespace) {
             Entity entity = new DynamicEntity(null,name,namespace);
-            DefaultEntities.this.addName(entity);
+            DefaultEntities.this.entities.addName(entity);
             return entity;
         }
     }
@@ -73,7 +94,9 @@ public class DefaultEntities extends AbstractNamespaceSupport implements Entitie
         
         @Override
         protected Relationship newInstance(String name, Namespace namespace) {
-            
+            Relationship relationship = new DynamicRelationship(namespace,name,null);
+            DefaultEntities.this.relationships.addName(relationship);
+            return relationship;
         }
         
     }
