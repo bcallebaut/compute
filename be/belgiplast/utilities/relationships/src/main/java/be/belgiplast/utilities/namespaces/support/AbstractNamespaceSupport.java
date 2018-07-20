@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @author benoit
  */
-public class AbstractNamespaceSupport implements Namespace{
+public class AbstractNamespaceSupport implements MutableNamespace{
     private String name;
     private Namespace parent;
     private JoinMap<String,NamedItem> items = new JoinMap<>();
@@ -31,7 +31,7 @@ public class AbstractNamespaceSupport implements Namespace{
         items.addMap(namespaces);
     }
 
-    protected AbstractNamespaceSupport(String name, Namespace parent) {
+    public AbstractNamespaceSupport(String name, Namespace parent) {
         this.name = name;
         this.parent = parent;
         items.addMap(names);
@@ -47,19 +47,23 @@ public class AbstractNamespaceSupport implements Namespace{
         return parent;
     }
     
-    protected void addName(Name name){
+    @Override
+    public void addName(Name name){
         names.put(name.getName(), name);
     }
     
-    protected void addNamespace(Namespace name){
+    @Override
+    public void addNamespace(Namespace name){
         namespaces.put(name.getName(), name);
     }
     
-    protected void removeName(Name name){
+    @Override
+    public void removeName(Name name){
         names.remove(name.getName());
     }
     
-    protected void removeNamespace(Namespace name){
+    @Override
+    public void removeNamespace(Namespace name){
         names.remove(name.getName());
     }
 
