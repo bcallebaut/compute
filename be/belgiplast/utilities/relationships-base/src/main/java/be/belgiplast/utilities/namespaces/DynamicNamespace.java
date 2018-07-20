@@ -6,6 +6,7 @@
 package be.belgiplast.utilities.namespaces;
 
 import be.belgiplast.utilities.namespaces.support.AbstractNamespaceSupport;
+import be.belgiplast.utilities.namespaces.support.MutableNamespace;
 import java.util.Collection;
 
 /**
@@ -13,19 +14,25 @@ import java.util.Collection;
  * Useful for uses cases like mind maps or variables cration in namespace
  * @author benoit
  */
-public class DynamicNamespace extends AbstractNamespaceSupport implements Namespace {
+public class DynamicNamespace implements Namespace {
 
+    private Namespace backend;
+
+    public DynamicNamespace(Namespace backend) {
+        this.backend = backend;
+    }
+    
     public DynamicNamespace(String name, Namespace parent) {
-        super(name, parent);
+        this(new AbstractNamespaceSupport(name, parent));
     }
     
     public DynamicNamespace(String name) {
-        super(name, null);
+        this(name, null);
     }
 
     @Override
     public <E extends NamedItem> E findByName(String name) {
-        E result = super.findByName(name);
+        E result = backend.findByName(name);
         if (result == null){            
             addName((Name)(result = ((E)new DynamicName(name,this))));
             return result;
@@ -35,7 +42,7 @@ public class DynamicNamespace extends AbstractNamespaceSupport implements Namesp
     
     
     public Namespace findNamespaceByName(String name) {
-        Namespace result = super.findByName(name);
+        Namespace result = backend.findByName(name);
         if (result == null){            
             addNamespace(result = new DynamicNamespace(name,this));
             return result;
@@ -43,13 +50,49 @@ public class DynamicNamespace extends AbstractNamespaceSupport implements Namesp
         return result;
     }
 
+    public void addNamespace(Namespace name) throws UnsupportedOperationException{
+        try{
+            ((MutableNamespace)backend).addNamespace(name); //To change body of generated methods, choose Tools | Templates.
+        }catch (Exception e){
+            throw new UnsupportedOperationException("Backend is not a mutable Namespace",e);
+        }
+    }
+    
+    public void addName(Name name) throws UnsupportedOperationException{
+        try{
+            ((MutableNamespace)backend).addName(name);
+        }catch (Exception e){
+            throw new UnsupportedOperationException("Backend is not a mutable Namespace",e);
+        }
+    } 
+
     @Override
-    public void addNamespace(Namespace name) {
-        super.addNamespace(name); //To change body of generated methods, choose Tools | Templates.
+    public Collection<? extends NamedItem> getChildren() {
+        return backend.getChildren();
     }
 
     @Override
-    public void addName(Name name) {
-        super.addName(name); //To change body of generated methods, choose Tools | Templates.
-    } 
+    public Collection<Namespace> getNamespaces() {
+        return backend.getNamespaces();
+    }
+
+    @Override
+    public Collection<? extends Name> getNames() {
+        return backend.getNames();
+    }
+
+    @Override
+    public Name findNameByName(String name) {
+        return backend.findNameByName(name);
+    }
+
+    @Override
+    public String getName() {
+        return backend.getName();
+    }
+
+    @Override
+    public Namespace getParent() {
+        return backend.getParent();
+    }
 }

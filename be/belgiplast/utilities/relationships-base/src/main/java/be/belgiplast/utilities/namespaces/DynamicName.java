@@ -11,9 +11,25 @@ import be.belgiplast.utilities.namespaces.support.AbstractNameSupport;
  *
  * @author benoit
  */
-public class DynamicName extends AbstractNameSupport{
+public class DynamicName implements Name{
 
+    private Name backend;
+
+    protected DynamicName(Name backend) {        
+        this.backend = backend;
+    }
+    
     public DynamicName(String name, Namespace parent) {
-        super(name, parent);
+        this(new AbstractNameSupport(name,parent));
+    }
+
+    @Override
+    public String getName() {
+        return backend.getName();
+    }
+
+    @Override
+    public Namespace getParent() {
+        return backend.getParent();
     }
 }
