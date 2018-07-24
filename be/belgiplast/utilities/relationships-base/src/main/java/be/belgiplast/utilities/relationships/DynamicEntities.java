@@ -5,9 +5,7 @@
  */
 package be.belgiplast.utilities.relationships;
 
-import be.belgiplast.utilities.namespaces.DynamicName;
 import be.belgiplast.utilities.namespaces.DynamicNamespace;
-import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.namespaces.NamespaceSystem;
 import be.belgiplast.utilities.namespaces.StringPathIterator;
@@ -22,12 +20,12 @@ import java.util.List;
  *
  * @author benoit
  */
-public class DynamicEntities extends AbstractNamespaceSupport implements Entities<DynamicName>{
+public class DynamicEntities extends AbstractNamespaceSupport implements Entities<DynamicEntityName,DynamicRelationshipName>{
 
     private String name = "entities";
     private final DynamicEntities.DynamicEntityFactory eFactory;
-    private final RelationshipFactory<Relationship<DynamicName>> rFactory;
-    private final List<Entity<DynamicName>> entities = new ArrayList<>();
+    private final RelationshipFactory<Relationship<DynamicRelationshipName>> rFactory;
+    private final List<Entity<DynamicEntityName>> entities = new ArrayList<>();
     private DynamicNamespaceSystem namespaceSystem;
 
     public DynamicEntities(String name) {
@@ -38,28 +36,28 @@ public class DynamicEntities extends AbstractNamespaceSupport implements Entitie
         namespaceSystem = new DynamicNamespaceSystem();
     }
     
-    public Entity<DynamicName> createEntity(String name,String type){
-        eFactory.setType((Name)namespaceSystem.findName(type));
+    public Entity<DynamicEntityName> createEntity(String name,String type){
+        eFactory.setType((EntityType)namespaceSystem.findName(type));
         return eFactory.createEntity(name);
     }
     
-    public Relationship<DynamicName> createRelationship(String name,String type){
-        eFactory.setType((Name)namespaceSystem.findName(type));
+    public Relationship<DynamicRelationshipName> createRelationship(String name,String type){
+        //rFactory.setType((RelationshipType)namespaceSystem.findName(type));
         return rFactory.createRelationship(name);
     }
     
     @Override
-    public EntityFactory<Entity<DynamicName>> getEntityFactory() {
+    public EntityFactory<Entity<DynamicEntityName>> getEntityFactory() {
         return eFactory;
     }
 
     @Override
-    public RelationshipFactory<Relationship<DynamicName>> getRelationshipFactory() {
+    public RelationshipFactory<Relationship<DynamicRelationshipName>> getRelationshipFactory() {
         return rFactory;
     }
 
     @Override
-    public Collection<Entity<DynamicName>> getEntities() {
+    public Collection<Entity<DynamicEntityName>> getEntities() {
         return entities;
     }
 
@@ -73,47 +71,47 @@ public class DynamicEntities extends AbstractNamespaceSupport implements Entitie
         return null;
     }
     
-    private class DynamicEntityFactory extends EntityFactory<Entity<DynamicName>>{
+    private class DynamicEntityFactory extends EntityFactory<Entity<DynamicEntityName>>{
 
-        private Name type;
+        private EntityType type;
 
         public DynamicEntityFactory(Namespace namespace) {
             super(namespace);
         }
 
-        public Name getType() {
+        public EntityType getType() {
             return type;
         }
 
-        public void setType(Name type) {
+        public void setType(EntityType type) {
             this.type = type;
         }
         
         @Override
-        protected Entity<DynamicName> newInstance(String name,Namespace namespace) {
+        protected Entity<DynamicEntityName> newInstance(String name,Namespace namespace) {
             DynamicEntity entity = new DynamicEntity(type,name,namespace);
             return entity;
         }
     }
     
-    private class DynamicRelationshipFactory extends RelationshipFactory<Relationship<DynamicName>>{
+    private class DynamicRelationshipFactory extends RelationshipFactory<Relationship<DynamicRelationshipName>>{
 
-        private Name type;
+        private RelationshipType type;
 
         public DynamicRelationshipFactory(Namespace namespace) {
             super(namespace);
         }
 
-        public Name getType() {
+        public RelationshipType getType() {
             return type;
         }
 
-        public void setType(Name type) {
+        public void setType(RelationshipType type) {
             this.type = type;
         }
         
         @Override
-        protected Relationship<DynamicName> newInstance(String name,Namespace namespace) {
+        protected Relationship<DynamicRelationshipName> newInstance(String name,Namespace namespace) {
             DynamicRelationship entity = new DynamicRelationship(namespace,name,type);
             return entity;
         }

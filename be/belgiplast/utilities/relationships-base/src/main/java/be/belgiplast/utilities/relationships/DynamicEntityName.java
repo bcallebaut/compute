@@ -5,18 +5,17 @@
  */
 package be.belgiplast.utilities.relationships;
 
-import be.belgiplast.utilities.namespaces.Name;
+import be.belgiplast.utilities.namespaces.DynamicName;
 import be.belgiplast.utilities.namespaces.Namespace;
-import be.belgiplast.utilities.relationships.support.EntitySupport;
 
 /**
  *
  * @author benoit
  */
-public class DynamicEntity extends EntitySupport{
+public class DynamicEntityName extends DynamicName implements EntityType{
     
-    public DynamicEntity(EntityType type, String name, Namespace parent) {
-        super(type, name, parent);
+    public DynamicEntityName(String name, Namespace parent) {
+        super(name, parent);
     }
     
 }

@@ -5,7 +5,6 @@
  */
 package be.belgiplast.utilities.relationships;
 
-import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.relationships.support.RelationshipSupport;
 
@@ -15,7 +14,7 @@ import be.belgiplast.utilities.relationships.support.RelationshipSupport;
  */
 public class DynamicRelationship extends RelationshipSupport implements Relationship{
 
-    public DynamicRelationship(Namespace parent, String name, Name id) {
+    public DynamicRelationship(Namespace parent, String name, RelationshipType id) {
         super(parent, name, id);
     }
 
@@ -31,7 +30,7 @@ public class DynamicRelationship extends RelationshipSupport implements Relation
     private class InverseRelationship implements Relationship{
 
         @Override
-        public Name getId() {
+        public RelationshipType getId() {
             return null;
         }
 
