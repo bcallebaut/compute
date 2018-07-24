@@ -6,14 +6,11 @@
 package be.belgiplast.utilities.relationships;
 
 import be.belgiplast.utilities.namespaces.Name;
-import java.util.List;
 
 /**
  *
  * @author benoit
  */
-public interface Entity<N extends EntityType> extends Name {
-    N getEntityType();
-    <T extends Name> List<Relationship<T>> getRelationships(Name type);
-    List<Relationship<Name>> getRelationships();
+public interface EntityType extends Name{
+    
 }
