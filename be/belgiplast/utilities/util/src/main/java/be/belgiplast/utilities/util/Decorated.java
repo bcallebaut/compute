@@ -10,5 +10,5 @@ package be.belgiplast.utilities.util;
  * @author benoit
  */
 public interface Decorated {
-    Decorator getDecorator(Class<Decorator> clazz);
+    <D extends Decorator> D getDecorator(Class<D> clazz);
 }
