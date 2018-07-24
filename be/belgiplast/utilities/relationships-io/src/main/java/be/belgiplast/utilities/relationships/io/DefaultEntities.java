@@ -6,14 +6,15 @@
 package be.belgiplast.utilities.relationships.io;
 
 import be.belgiplast.utilities.namespaces.DynamicNamespace;
-import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.namespaces.support.AbstractNamespaceSupport;
 import be.belgiplast.utilities.relationships.DynamicEntity;
 import be.belgiplast.utilities.relationships.DynamicRelationship;
 import be.belgiplast.utilities.relationships.Entities;
 import be.belgiplast.utilities.relationships.Entity;
+import be.belgiplast.utilities.relationships.EntityType;
 import be.belgiplast.utilities.relationships.Relationship;
+import be.belgiplast.utilities.relationships.RelationshipType;
 import be.belgiplast.utilities.relationships.factories.EntityFactory;
 import be.belgiplast.utilities.relationships.factories.RelationshipFactory;
 import java.util.Collection;
@@ -22,7 +23,7 @@ import java.util.Collection;
  *
  * @author benoit
  */
-public class DefaultEntities extends AbstractNamespaceSupport implements Entities<Name>{
+public class DefaultEntities extends AbstractNamespaceSupport implements Entities<EntityType,RelationshipType>{
 
     private String name;
     private DynamicNamespace entities;
@@ -60,8 +61,8 @@ public class DefaultEntities extends AbstractNamespaceSupport implements Entitie
     }
 
     @Override
-    public Collection<Entity<Name>> getEntities() {
-        return (Collection<Entity<Name>>)entities.getNames();
+    public Collection<Entity<EntityType>> getEntities() {
+        return (Collection<Entity<EntityType>>)entities.getNames();
     }
     
     public Entity createEntity(String name){

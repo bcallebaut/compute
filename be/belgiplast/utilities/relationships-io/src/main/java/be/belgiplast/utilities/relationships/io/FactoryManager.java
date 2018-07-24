@@ -10,7 +10,9 @@ import be.belgiplast.utilities.relationships.DynamicEntity;
 import be.belgiplast.utilities.relationships.DynamicRelationship;
 import be.belgiplast.utilities.relationships.Entities;
 import be.belgiplast.utilities.relationships.Entity;
+import be.belgiplast.utilities.relationships.EntityType;
 import be.belgiplast.utilities.relationships.Relationship;
+import be.belgiplast.utilities.relationships.RelationshipType;
 import be.belgiplast.utilities.relationships.io.spi.FactoryProvider;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +41,7 @@ public abstract class FactoryManager implements RelationshipsFactory{
     public Entity createEntity(String type, String name) {
         RelationshipsFactory factory = entitiesfactories.get(type);
         if (factory == null)
-            return new DynamicEntity(namespace.findNameByName(type),name,homeNamespace);
+            return new DynamicEntity((EntityType)namespace.findNameByName(type),name,homeNamespace);
         return factory.createEntity(type, name);
     }
     
@@ -49,7 +51,7 @@ public abstract class FactoryManager implements RelationshipsFactory{
     public Relationship createRelationship(String type,String id) {
         RelationshipsFactory factory = entitiesfactories.get(type);
         if (factory == null)
-            return new DynamicRelationship(homeNamespace,id,namespace.findNameByName(type));
+            return new DynamicRelationship(homeNamespace,id,(RelationshipType)namespace.findNameByName(type));
         return factory.createRelationship(type,id);
     }
     
