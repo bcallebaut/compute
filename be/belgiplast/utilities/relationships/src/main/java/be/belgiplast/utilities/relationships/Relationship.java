@@ -11,7 +11,7 @@ import be.belgiplast.utilities.namespaces.Name;
  *
  * @author benoit
  */
-public interface Relationship<N extends Name> extends Name {
+public interface Relationship<N extends RelationshipType> extends Name {
     N getId();
     Entity from();
     Entity to();

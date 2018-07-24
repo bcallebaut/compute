@@ -9,12 +9,13 @@ import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.relationships.Entity;
 import be.belgiplast.utilities.relationships.Relationship;
+import be.belgiplast.utilities.relationships.RelationshipType;
 
 /**
  *
  * @author benoit
  */
-public class RelationshipSupport<N extends Name> implements Relationship<Name>{
+public class RelationshipSupport<N extends RelationshipType> implements Relationship<N>{
 
     private Namespace parent;
     private String name;

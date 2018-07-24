@@ -15,8 +15,8 @@ import java.util.Collection;
  *
  * @author benoit
  */
-public interface Entities<N extends Name> extends Namespace{
+public interface Entities<N extends EntityType,R extends RelationshipType> extends Namespace{
     EntityFactory<Entity<N>> getEntityFactory();
-    RelationshipFactory<Relationship<N>> getRelationshipFactory();
+    RelationshipFactory<Relationship<R>> getRelationshipFactory();
     Collection<Entity<N>> getEntities();
 }

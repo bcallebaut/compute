@@ -8,7 +8,9 @@ package be.belgiplast.utilities.relationships.support;
 import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
 import be.belgiplast.utilities.relationships.Entity;
+import be.belgiplast.utilities.relationships.EntityType;
 import be.belgiplast.utilities.relationships.Relationship;
+import be.belgiplast.utilities.relationships.RelationshipType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,24 +23,24 @@ import java.util.Map;
  */
 public class EntitySupport implements Entity{
 
-    private Name type;
+    private EntityType type;
     private String name;
     private Namespace parent;
-    private final Map<Name,List<Relationship<Name>>> relationships;
+    private final Map<Name,List<Relationship<RelationshipType>>> relationships;
 
-    public EntitySupport(Name type, String name, Namespace parent) {
+    public EntitySupport(EntityType type, String name, Namespace parent) {
         this.type = type;
         this.name = name;
         this.parent = parent;
         relationships = new HashMap<>();
     }
     
-    protected EntitySupport(Name type, String name, Namespace parent, List<Relationship<Name>> relationships) {
+    protected EntitySupport(EntityType type, String name, Namespace parent, List<Relationship<RelationshipType>> relationships) {
         this.type = type;
         this.name = name;
         this.parent = parent;
         this.relationships = new HashMap<>();
-        for (Relationship<Name> rel : relationships)
+        for (Relationship<RelationshipType> rel : relationships)
             addRelationship(rel);
     }
 
@@ -47,29 +49,29 @@ public class EntitySupport implements Entity{
     }
     
     @Override
-    public Name getEntityType() {
+    public EntityType getEntityType() {
         return type;
     }
 
     @Override
-    public List<Relationship<Name>> getRelationships(Name type) {
-        List<Relationship<Name>> result = relationships.get(type);
+    public List<Relationship<RelationshipType>> getRelationships(RelationshipType type) {
+        List<Relationship<RelationshipType>> result = relationships.get(type);
         if (result == null)
             return Collections.emptyList();
         return result;
     }
     
-    public List<Relationship<Name>> getRelationships() {
-        List<Relationship<Name>> result = new ArrayList<>();
-        for (List<Relationship<Name>> l : relationships.values())
+    public List<Relationship<RelationshipType>> getRelationships() {
+        List<Relationship<RelationshipType>> result = new ArrayList<>();
+        for (List<Relationship<RelationshipType>> l : relationships.values())
             result.addAll(l);
         return result;
     }
     
     protected void addRelationship(Relationship rel){
-        List<Relationship<Name>> result = relationships.get(rel.getId());
+        List<Relationship<RelationshipType>> result = relationships.get(rel.getId());
         if (result == null){
-            result = new ArrayList<Relationship<Name>>();
+            result = new ArrayList<Relationship<RelationshipType>>();
             relationships.put(rel.getId(),result);
         }
         result.add(rel);

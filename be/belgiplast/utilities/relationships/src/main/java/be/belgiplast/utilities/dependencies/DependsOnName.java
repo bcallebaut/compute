@@ -5,14 +5,14 @@
  */
 package be.belgiplast.utilities.dependencies;
 
-import be.belgiplast.utilities.namespaces.Name;
 import be.belgiplast.utilities.namespaces.Namespace;
+import be.belgiplast.utilities.relationships.RelationshipType;
 
 /**
  *
  * @author benoit
  */
-class DependsOnName implements Name{
+class DependsOnName implements RelationshipType{
 
     private Namespace parent;
 
